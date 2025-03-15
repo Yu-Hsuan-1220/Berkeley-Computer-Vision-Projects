@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from math import floor
+import cv2
+import os
 def ncc(arr1, arr2):
     avg1 = np.average(arr1)
     avg2 = np.average(arr2)
@@ -34,7 +36,8 @@ def crop(img, percentage):
     return img[start_x:end_x+1, start_y:end_y+1]
 
 
-Image_path = './original_Image/01112v.jpg'
+Image_path = './hw1/original_Image/01112v.jpg'
+result_dir = './hw1/result'
 img = Image.open(Image_path).convert('L')
 
 
@@ -66,7 +69,7 @@ RGB_array[2] = B_array
 scope = 20
 
 ncc_RGB_array = np.zeros_like(RGB_array)
-print(ncc_RGB_array.shape)
+# print(ncc_RGB_array.shape)
 ncc_RGB_array[0] = R_array ## fixed R
 
 #align R & G array
@@ -101,3 +104,7 @@ print(value, best_x, best_y)
 
 plt.imshow(np.transpose(ncc_RGB_array, (1, 2, 0)))
 plt.show()
+
+ncc_RGB_array = np.transpose(ncc_RGB_array, (1, 2, 0))
+ncc_BGR_array = cv2.cvtColor(ncc_RGB_array, cv2.COLOR_RGB2BGR)
+cv2.imwrite(os.path.join(result_dir, '01112v.jpg'), ncc_BGR_array)
