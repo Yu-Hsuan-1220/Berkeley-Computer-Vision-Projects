@@ -29,11 +29,9 @@ def hybric_image(img1, img2):
 
 def get_Gassian_stack(img, level = 5):
     stack = [img.copy()]
-    for i in range(level):
-        img = get_Gaussian_blur(img, k_size = 11, sigma = 3)
+    for _ in range(level):
+        img = get_Gaussian_blur(img, k_size = 21, sigma = 10)
         stack.append(img.copy())
-        if(stack[-1].all() == stack[-2].all()):
-            print(i)
     return stack
     
 
@@ -65,10 +63,14 @@ def part2_34():
     img2 = cv2.imread(os.path.join(img_dir, 'orange.jpeg'))
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    
     mask = np.zeros_like(img1)
     mask[:, :mask.shape[1]//2] = 1
     mask_stack = get_Gassian_stack(mask, 5)
-    
+    plt.imshow(mask_stack[-1], cmap='gray')
+    plt.show()
+
+
 
 #part2_1()
 #part2_2()
