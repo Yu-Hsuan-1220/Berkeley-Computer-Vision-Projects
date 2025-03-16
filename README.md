@@ -10,3 +10,5 @@ Given spilt R、G、B channel gray-scale image, use NCC(Normalized Cross-Correla
 
 ## Project2
 ### Part 1
+
+First, apply Gaussian blur to reduce noise, then use convolution to approximate the partial derivatives in the x and y directions, and finally set a threshold for edge detection.
