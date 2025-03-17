@@ -27,13 +27,18 @@ def hybric_image(img1, img2):
     img2_low = get_Gaussian_blur(img2, 21, 11).astype(np.float32)
     return np.clip(((2/5)*img1_high +  (3/5)* img2_low), 0, 255).astype(np.uint8)
 
-def get_Gassian_stack(img, level = 5):
+def get_Gassian_stack(img, level = 5, k_size = 5, sigma = 1):
     stack = [img.copy()]
     for _ in range(level):
-        img = get_Gaussian_blur(img, k_size = 21, sigma = 10)
+        img = get_Gaussian_blur(img, k_size, sigma)
         stack.append(img.copy())
     return stack
-    
+
+def get_laplacian_stack(img, level = 5, k_size = 5, sigma = 1):
+    g_stack = get_Gassian_stack(img, level, k_size, sigma)
+    l_stack = [g_stack[i] - g_stack[i+1] for i in range(level-1)]
+    l_stack.append(g_stack[-1])
+    return l_stack
 
 def part2_1():
     img = cv2.imread(os.path.join(img_dir, 'taj.jpg'))
@@ -42,8 +47,8 @@ def part2_1():
     img_high = np.clip(img-blur_img, 0, 255)
     img_sharp =np.clip(img + img_high*1.5, 0, 255).astype(np.uint8)
     img_sharp_rgb = cv2.cvtColor(img_sharp, cv2.COLOR_BGR2RGB)
-    plt.imshow(img_sharp_rgb)
-    plt.show()
+    # plt.imshow(img_sharp_rgb)
+    # plt.show()
     cv2.imwrite(os.path.join(result_dir, 'sharpen.jpg'), img_sharp)
 
 def part2_2():
@@ -55,7 +60,7 @@ def part2_2():
     result_rgb = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
     plt.imshow(result_rgb)
     plt.show()
-    cv2.imwrite(os.path.join(result_dir, 'hybric_Derek.jpg'), result)
+    #cv2.imwrite(os.path.join(result_dir, 'hybrid_Derek.jpg'), result)
 
 def part2_34():
     level = 5
@@ -66,12 +71,22 @@ def part2_34():
     
     mask = np.zeros_like(img1)
     mask[:, :mask.shape[1]//2] = 1
-    mask_stack = get_Gassian_stack(mask, 5)
-    plt.imshow(mask_stack[-1], cmap='gray')
+    mask_stack = get_Gassian_stack(mask, level, 51, 31)
+    
+    l_stack1 = get_laplacian_stack(img1, level, 11, 7)
+    l_stack2 = get_laplacian_stack(img2, level, 11, 7)
+
+    laplacian_blend = []
+    for i in range(level):
+        laplacian_blend.append(l_stack1[i]*mask_stack[i] + l_stack2[i]*(1-mask_stack[i]))
+
+    blend_img = laplacian_blend[-1]
+    for i in reversed(range(level-1)):
+        blend_img = get_Gaussian_blur(blend_img, 11, 7) + laplacian_blend[i]
+    plt.imshow(blend_img, cmap = 'gray')
     plt.show()
-
-
+    #cv2.imwrite(os.path.join(result_dir, 'blend.jpg'), blend_img)    
 
 #part2_1()
-#part2_2()
-part2_34()
+part2_2()
+#part2_34()

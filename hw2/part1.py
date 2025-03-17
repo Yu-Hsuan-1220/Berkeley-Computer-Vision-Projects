@@ -50,15 +50,15 @@ def part1_2():
     g1d = cv2.getGaussianKernel(k_size, sigma)
     G = np.outer(g1d, g1d.T)
     blur_img = convolve2d(img, G, mode='same', boundary='symm')
-    
+    plt.imshow(blur_img, cmap='gray')
+    plt.show()
     threshold = 2000
 
     Ix = pd_x(blur_img)
     Iy = pd_y(blur_img)
 
     result = convert(Ix, Iy, threshold)
-    plt.imshow(result, cmap='gray')
-    plt.show()
+    
     cv2.imwrite(os.path.join(result_dir, 'Gaussian_cameraman.png'), result)
 
 def part1_3():
@@ -80,4 +80,4 @@ def part1_3():
     plt.show()
     cv2.imwrite(os.path.join(result_dir, 'DoG_cameraman.png'), result)
 
-part1_3()
+part1_2()
