@@ -37,5 +37,5 @@ By blending the high frequency portion of one image with the low-frequency porti
 
 Result:If you look the picture at a distance, you will clearly see the cat.
 
-![Alt text](hw2/result/hybric_Derek.jpg)
+![Alt text](hw2/result/hybrid_Derek.jpg)
 
